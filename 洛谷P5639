@@ -1,0 +1,23 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int speed;
+    cin>>speed;
+
+    bool v=1;
+    int time=1;
+    for(int i=0;i<speed;i++){
+        bool x;
+        cin>>x;
+        if(v^x){
+
+        }
+        else{
+            v=!v;
+            time++;
+        }
+    }
+    cout<<time;
+    return 0;
+}
