@@ -1,0 +1,70 @@
+思路历程如下
+1 这题要最短时间，先考虑贪心
+2 思考如何贪心时，先是想到按速度来贪，但是仔细思考发现在同一个人内不需要排序，按照整体排序也没什么意义，遂放弃
+3 发现时间是片段式的，所以想到用差分数组来离散每段路程
+4 差分成功之后，发现可以按照时间增量的大小来选择要谁来跑下一km（实际上是连续的，只是看作离散）
+5 所以想到把增量扔进优先队列里自动排序，外部只管取出最小，然后补入最小增量的这个人的下一段增量
+6 对情况的细化判断: 如果这个人跑满10km了，直接出队，也不让满10km的人的时间再入队
+所以得到以下代码
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int ar[6][11];
+int ptr[6];
+
+struct A
+{
+    int id;
+    int v;
+};
+
+struct MyComparator {
+    bool operator()(A a, A b) {
+        return a.v > b.v;
+    }
+};
+
+
+int main() {
+    std::priority_queue<A, std::vector<A>, MyComparator> pq;
+    for(int i=1;i<=5;i++){
+        ptr[i]=1;
+        int prev=0;
+        int now;
+        for(int j=1;j<=10;j++){
+            cin>>now;
+            ar[i][j]=now-prev;
+            prev=now;
+        }
+           pq.push( { i, ar[i][1]} );
+    }
+
+    int s=0;
+    int timesum=0;
+    while(s<25){
+
+        while(ptr[ pq.top().id]==10){
+            pq.pop();
+        }
+        timesum+= ar[pq.top().id][ptr[pq.top().id]];
+
+            ptr[ pq.top().id]++;
+            pq.push( { pq.top().id , ar[pq.top().id][ptr[ pq.top().id]] } );
+             s++;
+
+            pq.pop();
+
+    }
+    cout<<timesum<<endl;
+    for(int i=1;i<=5;i++){
+        if(i!=1){
+            cout<<" ";
+        }
+        cout<<ptr[i]-1;
+    }
+
+
+    return 0;
+}
