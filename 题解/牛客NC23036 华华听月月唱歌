@@ -1,0 +1,151 @@
+思路不难
+1 初看就是线段覆盖问题，使用贪心，然后贪的是尽可能长的线段
+2 线段覆盖的思路就是先按照线段左端点排序，然后再开始选择
+3 思考线段覆盖的几种可能，总结出cmp 
+4 第一次思考时，我的想法是考虑到多个线段同时可以使用时，我们的选择应该是尽可能长，把短的抛弃掉（当然这并不完全对）
+于是就有了如下代码，拿了70分
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct A
+{
+    int b;
+    int e;
+    int l;
+};
+
+bool cmp(A a,A b){
+    if(a.b==b.b){
+        return a.e>b.e;
+    }
+    else{
+      return a.b<b.b;
+    }
+
+}
+int main() {
+    int l,n;
+    cin>>l>>n;
+    vector<A> ar(n);
+    for(int i=0;i<n;i++){
+        cin>>ar[i].b>>ar[i].e;
+        ar[i].l=ar[i].e-ar[i].b;
+    }
+
+    sort(ar.begin(),ar.end(),cmp);
+
+
+    if(ar[0].b!=1){
+        cout<<-1;
+        return  0;
+    }
+       int nowe=ar[0].e;
+
+    int sum=1;
+    for(int i=1;i<n;i++){
+           if(ar[i].e<=nowe){
+            continue;
+           }
+           if(ar[i].b>nowe+1){
+               cout<<-1;
+               return 0;
+           }
+           else{
+               if(i+1<n  && ar[i+1].b<=nowe+1&& ar[i+1].l>=ar[i].l){
+                   continue;
+               }
+           }
+           nowe=ar[i].e;
+           sum++;
+    }
+
+    if(nowe>=l){
+      cout<<sum;
+    }
+    else{
+        cout<<-1;
+    }
+
+
+    return 0;
+}
+
+但是牛客acm赛制，重新思考
+1 这题属于贪心，贪的是线段长
+ 然后意识到错误的点，正确应该是 在能全覆盖的条件下尽可能选择延伸的 远 的线段
+依照此思路，就不再依赖长度这一属性，改出ac代码
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct A
+{
+    int b;
+    int e;
+
+};
+
+bool cmp(A a,A b){
+    if(a.b==b.b){
+        return a.e>b.e;
+    }
+    else{
+      return a.b<b.b;
+    }
+
+}
+int main() {
+    int l,n;
+    cin>>l>>n;
+    vector<A> ar(n);
+    for(int i=0;i<n;i++){
+        cin>>ar[i].b>>ar[i].e;
+    }
+
+    sort(ar.begin(),ar.end(),cmp);
+
+
+    if(ar[0].b!=1){
+        cout<<-1;
+        return  0;
+    }
+       int nowe=ar[0].e;
+
+    int sum=1;
+    int i=1;
+    while(nowe<l){
+       int max_e=nowe;
+       int best_j=-1;
+
+           for(int j=i;j<n;j++){
+            if(ar[j].b<=nowe+1){
+                   if(ar[j].e>=max_e){
+                    max_e=ar[j].e;
+                       best_j=j;
+                   }
+
+            }
+
+            else{
+                break;
+            }
+
+           }
+
+           if(best_j==-1){
+               cout<<-1;
+               return 0;
+           }
+           nowe=max_e;
+           sum++;
+           i=best_j+1;
+    }
+
+    cout<<sum;
+
+
+    return 0;
+}
+
+
