@@ -1,0 +1,60 @@
+思路历程如下
+1 最少时间，先考虑贪心，贪的是开头尽量选重且大的棍子，遂考虑先排序
+2 观察样例，发现最终的排序结果是保证 长度降序 且 重量降序
+3 一开始想用for循环，但是考虑到按照样例的话需要过不止一遍循环，也不知道循环多久，所以考虑用while，用bool数组去标记棍子有没用过，然后不断for选出当前最优
+于是得到如下代码
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+struct A
+{
+    int l;
+    int w;
+    bool b_used=0;
+};
+
+bool cmp1(A a,A b){
+    if(a.l==b.l){
+        return a.w>b.w;
+    }
+    return a.l>b.l;
+}
+
+int main() {
+    int n;
+    cin>>n;
+    vector<A> ar(n);
+
+    for(int i=0;i<n;i++){
+        cin>>ar[i].l>>ar[i].w;
+    }
+
+
+    stable_sort(ar.begin(),ar.end(),cmp1);
+
+
+
+
+    int sum=0;
+    int remain=n;
+    while(remain){
+
+        int nowl=-1;
+        int noww=-1;
+        for(auto &it:ar){
+            if(!it.b_used&&(nowl==-1||it.l<=nowl&&it.w<=noww)){//没用过且（还没调整或者不需要重新调整）
+                it.b_used=1;
+                nowl=it.l;
+                noww=it.w;
+                remain--;
+            }
+        }
+        sum++;
+    }
+    cout<<sum;
+
+    return 0;
+}
