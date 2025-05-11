@@ -1,0 +1,46 @@
+思路历程
+
+1 看到最小，先考虑贪心，但是排序方法不直观
+2 发现是二元排序，尝试模拟序列，假设交换已经排好的序列中的相邻两个值，反推应该如何排序
+3 得到规律  return a.t * b.d < a.d * b.t;  
+4 按照这样写完程序，得到答案的时候比较疑惑，会比样例输出大得多，这是这题比较反直觉的地方，他的理解是去接牛的时候就直接不吃草了，而且接第一头牛甚至不需要时间
+5 按照题给的逻辑重修代码 得到如下
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+#define ull unsigned long long
+
+struct A {
+    int d;  // 吃花速度
+    int t;  // 运输时间
+};
+
+bool cmp(A a, A b) {
+    return a.t * b.d < a.d * b.t;  
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<A> ar(n);
+
+    ull total_d = 0; 
+    for (auto &it : ar) {
+        cin >> it.t >> it.d;
+        total_d += it.d;
+    }
+
+    sort(ar.begin(), ar.end(), cmp);
+    ull sum = 0;
+    ull remaining_d = total_d; 
+
+    for (auto it : ar) {
+        remaining_d -= it.d;  
+        sum += it.t * remaining_d; 
+    }
+    
+    cout << sum * 2;  
+    return 0;
+}
