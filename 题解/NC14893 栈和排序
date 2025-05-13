@@ -1,0 +1,41 @@
+1 这题是自然排序的栈排序，比较简单
+2 如果改成普通的栈排序，只需要先cp一份输入数组，然后排序，剩下的就按照如下思路即可
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+int main() {
+    int n;
+    cin>>n;
+    stack<int> s;
+    int nowmax=n;
+    vector<int> res(n);
+    int idx=0;
+    for(int i=0;i<n;i++){
+        int x;
+        cin>>x;
+        if(x==nowmax){
+            res[idx]=x;
+            idx++;
+            nowmax--;
+        }
+        else{
+              s.push(x);
+        }
+    }
+
+    while(!s.empty()){
+        res[idx]=s.top();
+        s.pop();
+        idx++;
+    }
+    for(int i=0;i<idx;i++){
+        if(i!=0){
+            cout<<" ";
+        }
+        cout<<res[i];
+    }
+    return 0;
+}
